@@ -13,7 +13,8 @@
  */
 html * {
   color-profile: sRGB;
-  rendering-intent: auto; }
+  rendering-intent: auto;
+  box-sizing: border-box; }
 
 /*********************************************
  * GLOBAL STYLES
@@ -83,7 +84,6 @@ body {
  *********************************************/
 .reveal section img {
   margin: 15px 0px;
-  background: rgba(255, 255, 255, 0.12);
   -webkit-transition: all .2s linear;
   -moz-transition: all .2s linear;
   -ms-transition: all .2s linear;
@@ -92,8 +92,7 @@ body {
 
 .reveal a:hover img {
   background: rgba(255, 255, 255, 0.2);
-  border-color: #268bd2;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.55); }
+  border-color: #268bd2; }
 
 /*********************************************
  * NAVIGATION CONTROLS
@@ -145,3 +144,11 @@ body {
  *********************************************/
 .reveal .slide-number {
   color: #268bd2; }
+
+.reveal .c50 {
+  display: inline-block;
+  width: 49%;
+  vertical-align: middle; }
+
+.reveal pre {
+  box-shadow: none; }

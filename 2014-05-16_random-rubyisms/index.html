@@ -50,26 +50,33 @@
 
 
 <section data-markdown><script type="text/template">
+![gb logo](img/groupbuddies.png)
+
 # Miguel Palhas
 
-`@naps62`
-![gb logo](img/groupbuddies.png)
+# `@naps62`
 </script></section>
 
 
-<section data-markdown><script type="text/template">
-# Disclaimer
+<section>
+  <h1>Disclaimer</h1>
 
-* Some of these might really be useless
-* There are probably better solutions
-* They're still interesing, so what the hell...
-</script></section>
+  <div class="stretch">
+    <br>
+    <p>Some of these stuff...</p>
+
+    <ul>
+      <li>... might really be useless</li>
+      <li>... is probably not the best approach</li>
+    </ul>
+  </div>
+</section>
 
 
-<section data-markdown><script type="text/template">
-# `attr_accessor`
+<section>
+  <h1><code class="ruby">attr_accessor</code></h1>
 
-```ruby
+  <pre><code class="ruby">
 class X
   def attr_reader :something
 end
@@ -77,8 +84,8 @@ end
 class Y
   def something; @something; end
 end
-```
-</script></section>
+  </code></pre>
+</section>
 
 
 <section data-markdown><script type="text/template">
@@ -86,8 +93,12 @@ end
 
 ```ruby
 user = { first_name: 'Professor' }
-user[:last_name].underscore                   # NoMethodError for nil:NilClass
-user[:last_name].underscore rescue "CHIBANGA" # falls back to "CHIBANGA"
+
+user[:last_name].underscore
+  # NoMethodError for nil:NilClass
+
+user[:last_name].underscore rescue "CHIBANGA"
+  # falls back to "CHIBANGA"
 ```
 </script></section>
 
@@ -95,7 +106,19 @@ user[:last_name].underscore rescue "CHIBANGA" # falls back to "CHIBANGA"
 <section data-markdown><script type="text/template">
 # Retry
 
-Calls the `(begin..rescue)`block once again
+Calls the `(begin..rescue)` block once again
+
+```
+begin
+  some_dangerous_stuff
+rescue AnException => e
+  retry
+end
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+# Retry
 ```
 def insist(max_attempts: 3, &block)
   begin
@@ -110,21 +133,17 @@ end
 </script></section>
 
 
-<section data-markdown><script type="text/template">
-# Lambdas quack like hashes
+<section>
+  <h1>Lambdas quack like hashes</h1>
 
-```ruby
+<pre><code class="ruby">
 fibs = -> x { (x <= 1) ? 1 : fibs[x-1] + fibs[x-2] }
 
 fibs.call(20)
-```
 
-But also:
-
-```ruby
 fibs[20]
-```
-</script></section>
+</code></pre>
+</section>
 
 
 <section data-markdown><script type="text/template">
@@ -147,44 +166,36 @@ str[/(GB)/, 1]
 </script></section>
 
 
-<section data-markdown><script type="text/template">
-# Array or single element?
+<section>
+  <h1>Array or single element?</h1>
 
-```ruby
+<pre class="fragment"><code class="ruby">
 class Post < ActiveRecord::Base; end
 
 result  = Post.find(1)
-=> #<Post:...>
+=> #&lt;Post:...&gt;
 
 results = Post.find(1, 2)
-=> [#<Post:...>, #<Post:...>]
-```
-</script></section>
+=> [#&lt;Post:...&gt;, #&lt;Post:...&gt;]
+</code></pre>
 
-
-<section data-markdown><script type="text/template">
-# What if we don't know?
-
-```ruby
+<span class="fragment">What if we don't know?</span>
+<pre class="fragment"><code class="ruby">
 results = Post.find(*ids)
 
-[*result].map do |post|
+[*results].map do |post|
   # ...
 end
-```
+</code></pre>
 </script></section>
 
 
-<section data-markdown><script type="text/template">
-# Unary operators
 
-+, -, ! and ~ can be overriden
-</script></section>
+<section>
+<h1>Unary operators</h1>
 
-
-<section data-markdown>
-<script type="text/template">
-```ruby
+<p class="fragment">+, -, ! and ~ can be overriden</p>
+<pre class="fragment"><code class="ruby">
 class Counter
   def initialize
     @value = 0
@@ -198,183 +209,336 @@ class Counter
     @value -= 1
   end
 
-  def !
-    @value = 0
-  end
-
   def ~
     @value
   end
 end
-```
-</script>
+</code></pre>
+
+<pre class="fragment"><code class="ruby">
+c = Counter.new
++c
++c
+puts ~c # 2
+</code></pre>
+</section>
+
+<section>
+  <h1>Method Madness</h1>
+  <p>How far can we go?</p>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Method Madness
-</script>
-</section>
-
-
-<section data-markdown>
-<script type="text/template">
-```ruby
+<section>
+<h1>Method Madness</h1>
+<pre><code class="ruby">
 def m1(a, b=1)        # correct
-def m2(a=1, b)        # correct (most languages only support optional args at the end
+
+</code><code class="fragment ruby">
+def m2(a=1, b)        # correct
+
+</code><code class="fragment ruby">
 def m3(a, b=2, c)     # correct
+
+</code><code class="fragment ruby">
 def m4(a=1, b, c=3)   # wrong (optional args must be sequential)
+
+</code><code class="fragment ruby">
 def m5(a, b=2, *args) # correct
+
+</code><code class="fragment ruby">
 def m6(a=1, b, *args) # wrong
-```
-</script>
+
+</code></pre>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Method Madness pt. 2
+<section>
+  <h1>Method Madness</h1>
 
-```ruby
+  <div class="stretch">
+    <pre><code class="ruby">
 def m7(*args, c)      # correct
 
 def tail(*args, last)
   last
 end
-```
-</script>
+    </code><code class="fragment ruby">
+def m8(a, b=1, *args, d, e: 1, f:, **named_args, &block) # correct
+
+    </code><code class="fragment ruby">
+# blocks are just as powerful
+define_method 'm9' do |*args, **named_args, &block|
+end
+
+    </code><code class="fragment ruby">
+def m8(a, b=1, *args, d, e: 1, f:, **named_args, &block) # correct
+
+    </code><code class="fragment ruby">
+define_method ' ' do
+  "this actually works!"
+end
+
+send(' ')
+=&gt; "this actually works!"
+    </code></pre>
+  </div>
+</section>
+
+<section>
+  <h1>Modules</h1>
+  <p>How do they work?</p>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Modules
+<section>
+  <h1>Modules</h1>
 
-```ruby
+  <div class="stretch">
+    <div class="c50">
+      <pre><code class="ruby">
 class MyClass
 end
-```
-
-<img src="modules_1.svg" />
-</script>
+      </code></pre>
+    </div>
+    <div class="c50">
+      <img src="img/modules_1.svg" alt="modules 1" />
+    </div>
+  </div>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Modules
+<section>
+  <h1>Modules</h1>
 
-```ruby
-module MyModule; end
-
+  <div class="stretch">
+    <div class="c50">
+      <pre><code class="ruby">
 class MyClass
   include MyModule
 end
-```
-
-<img src="modules_2.svg" />
-</script>
+      </code></pre>
+    </div>
+    <div class="c50">
+      <img src="img/modules_2.svg" alt="modules 2" />
+    </div>
+  </div>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Modules
+<section>
+  <h1>Modules</h1>
 
-```ruby
-module MyModule; end
-module AnotherModule; end
-
+  <div class="stretch">
+    <div class="c50">
+      <pre><code class="ruby">
 class MyClass
   include MyModule
   include AnotherModule
 end
-```
-
-<img src="modules_3.svg" />
-</script>
+      </code></pre>
+    </div>
+    <div class="c50">
+      <img src="img/modules_3.svg" alt="modules 3" />
+    </div>
+  </div>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Modules
+<section>
+  <h1>Modules</h1>
 
-```ruby
-module Prepended; end
-
+  <div class="stretch">
+    <div class="c50">
+      <pre><code class="ruby">
 class MyClass
   prepend Prepended
 end
-```
-
-<img src="modules_3.svg" />
-</script>
+      </code></pre>
+    </div>
+    <div class="c50">
+      <img src="img/modules_4.svg" alt="modules 4" />
+    </div>
+  </div>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Lexical Scope
+<section>
+  <h1>Lexical Scope</h1>
 
-```ruby
-def m; end
-```
+  <div class="stretch">
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+  def m; end
+        </code></pre>
+      </div>
+      <div class="c50">
+        Defined in global scope (an instance of Object)
+      </div>
+    </div>
 
-defined in the global scope (actually an instance of Object)
-</script>
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+  Class MyClass
+    def m; end
+  end
+        </code></pre>
+      </div>
+      <div class="c50">
+        Defined in MyClass
+      </div>
+    </div>
+
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+  Class MyClass
+    def self.m; end
+  end
+        </code></pre>
+      </div>
+      <div class="c50">
+        ???
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h1>The Metaclass</h1>
+
+  <div class="stretch">
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+Array.class
+=&gt; Class
+        </code></pre>
+      </div>
+      <div class="c50">
+        <pre><code class="ruby">
+[].class
+=&gt; MyClass
+        </code></pre>
+      </div>
+    </div>
+
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+Array.singleton_class
+=&gt; &lt;Class:MyClass&gt;
+        </code></pre>
+      </div>
+      <div class="c50">
+        <pre><code class="ruby">
+[].singleton_class
+=&gt; &lt;Class:#&lt;MyClass:0x007f86d8d6e370&gt;&gt;
+        </code></pre>
+      </div>
+    </div>
+  </div>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Lexical Scope
+<section>
+  <h1>Defining metaclass methods</h1>
 
-```ruby
+  <div class="stretch">
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+class Array
+  def self.m; end
+end
+        </code></pre>
+      </div>
+      <div class="c50">
+        Defined in Array's metaclass
+      </div>
+    </div>
+
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
 def Array.m; end
-```
+        </code></pre>
+      </div>
+      <div class="c50">
+        Same as above
+      </div>
+    </div>
 
-defined in the scope of the Array class
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+class &lt;&lt; Array
+  def m; end
+end
+        </code></pre>
+      </div>
+      <div class="c50">
+        Same as above
+      </div>
+    </div>
 
-```ruby
-class method of Array
-```
-</script>
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+class Array
+  class &lt;&lt; self
+    def m; end
+  end
+end
+        </code></pre>
+      </div>
+      <div class="c50">
+        Same as above
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h1>Defining metaclass methods</h1>
+
+  <div class="stretch">
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+a = Array.new
+def a.m; end
+        </code></pre>
+      </div>
+      <div class="c50">
+        Defined in a's metaclass
+      </div>
+    </div>
+
+    <div class="fragment">
+      <div class="c50">
+        <pre><code class="ruby">
+a = Array.new
+class &lt;&lt; a
+  def m; end
+end
+        </code></pre>
+      </div>
+      <div class="c50">
+        Same as above
+      </div>
+    </div>
+  </div>
 </section>
 
 
-<section data-markdown>
-<script type="text/template">
-# Lexical Scope
-
-```ruby
-array = Array.new
-def array.m; end
-```
-
-defined in the scope this single instance
-instance method of array, not shared with other instances
-</script>
+<section>
+  <h1>Thank you!</h1>
+  <p>http://naps62.github.io/presentations</p>
 </section>
 
-
-<section data-markdown>
-<script type="text/template">
-```ruby
-class << self
-```
-</script>
-</section>
-
-
-<section data-markdown>
-<script type="text/template">
-# Hashes
-</script>
-</section>
-</div>
-</div>
 
     <script src="lib/js/head.min.js"></script>
     <script src="js/reveal.min.js"></script>
@@ -391,7 +555,7 @@ class << self
         overview: false,
 
         theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-        transition: Reveal.getQueryHash().transition || 'page', // default/cube/page/concave/zoom/linear/fade/none
+        transition: Reveal.getQueryHash().u || 'linear', // default/cube/page/concave/zoom/linear/fade/none
 
         // Parallax scrolling
         // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',

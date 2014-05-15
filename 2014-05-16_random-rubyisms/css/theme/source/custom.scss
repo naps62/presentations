@@ -29,6 +29,7 @@
 html * {
   color-profile: sRGB;
   rendering-intent: auto;
+  box-sizing: border-box;
 }
 
 // Solarized colors
@@ -68,3 +69,13 @@ $selectionBackgroundColor: $magenta;
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------
+
+.reveal .c50 {
+  display: inline-block;
+  width: 49%;
+  vertical-align: middle;
+}
+
+.reveal pre {
+  box-shadow: none;
+}
