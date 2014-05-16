@@ -59,6 +59,11 @@
 
 
 <section>
+  <h1>What's this about?</h1>
+</section>
+
+
+<section>
   <h1>Disclaimer</h1>
 
   <div class="stretch">
@@ -72,148 +77,190 @@
   </div>
 </section>
 
-
 <section>
   <h1><code class="ruby">attr_accessor</code></h1>
+  <h1>is faster</h1>
+</section>
 
+
+<section>
   <pre><code class="ruby">
-class X
-  def attr_reader :something
-end
+  class WithDefaultReader
+    def attr_reader :something
+  end
 
-class Y
-  def something; @something; end
-end
+  class WithCustomReader
+    def something; @something; end
+  end
+  </code></pre>
+
+  <pre class="fragment"><code class="bash">
+  $ bench/attr_accessor.rb
+  WithDefaultReader:
+    1.010000   0.000000   1.010000 (  1.021415)
+  WithCustomReader:
+    1.010000   0.000000   1.010000 (  1.004239)
   </code></pre>
 </section>
 
 
+<section>
+  <h1>Inline <code>resque</code></h1>
+</section>
+
 <section data-markdown><script type="text/template">
-# Inline `rescue`
+  ```ruby
+  user = { first_name: 'Professor' }
 
-```ruby
-user = { first_name: 'Professor' }
+  user[:last_name].underscore
+    # NoMethodError for nil:NilClass
 
-user[:last_name].underscore
-  # NoMethodError for nil:NilClass
-
-user[:last_name].underscore rescue "CHIBANGA"
-  # falls back to "CHIBANGA"
-```
+  user[:last_name].underscore rescue "CHIBANGA"
+    # falls back to "CHIBANGA"
+  ```
 </script></section>
 
 
-<section data-markdown><script type="text/template">
-# Retry
-
-Calls the `(begin..rescue)` block once again
-
-```
-begin
-  some_dangerous_stuff
-rescue AnException => e
-  retry
-end
-```
-</script></section>
+<section>
+  <h1><code>retry</code></h1>
+  <p>Real men don't care about exceptions</p>
+</section>
 
 <section data-markdown><script type="text/template">
-# Retry
-```
-def insist(max_attempts: 3, &block)
+  ```
   begin
-    attempts = 0
-    yield
+    some_dangerous_stuff
   rescue SomeException => e
-    attempts += 1
-    retry if attempts < max_attempts
+    retry
   end
-end
-```
+  ```
 </script></section>
+
+<section data-markdown><script type="text/template">
+
+Real use case:
+
+  ```
+  def insist(max_attempts: 3, &block)
+    begin
+      attempts = 0
+      yield
+    rescue SomeException => e
+      attempts += 1
+      retry if attempts < max_attempts
+    end
+  end
+  ```
+</script></section>
+
+<section>
+  <h1>Lambdas</h1>
+  <p>They quack like hashes</p>
+</section>
 
 
 <section>
   <h1>Lambdas quack like hashes</h1>
 
-<pre><code class="ruby">
-fibs = -> x { (x <= 1) ? 1 : fibs[x-1] + fibs[x-2] }
+  <div class="stretch">
 
-fibs.call(20)
+  <pre class="glue"><code class="ruby">
+  fibs = -&gt; x do
+    (x &lt;= 1) ? 1 : fibs.call(x-1) + fibs.call(x-2)
+  end
 
-fibs[20]
-</code></pre>
+  </code></pre><pre class="glue"><code class="fragment ruby">
+  fibs.call(20)
+  =&gt; 10946
+
+  </code></pre><pre class="glue"><code class="fragment ruby">
+  fibs[20]
+  =&gt; 10946
+
+  </code></pre>
+</div>
 </section>
 
 
-<section data-markdown><script type="text/template">
-# Faster RegEx extraction
+<section>
+  <h1>Faster RegEx extraction</h1>
+</section>
 
-```ruby
-str = "GB is not Great Britain"
 
-# the usual way
-match_results = str.match /(GB)/
-match_results[1]
-=> "GB"
-```
+<section>
+  <pre><code class="ruby">
+  str = "GB is not Great Britain"
 
-But also:
+  # the usual way
+  match_results = str.match /(GB)/
+  match_results[1]
+  =&gt; "GB"
+  </code></pre>
 
-```ruby
-str[/(GB)/, 1]
-```
+  <div class="fragment">
+  Can be shortened to:
+
+    <pre><code class="ruby">
+    str[/(GB)/, 1]
+    =&gt; "GB"
+    </code></pre>
+  </div>
 </script></section>
 
 
 <section>
-  <h1>Array or single element?</h1>
+  <h1>Array or element</h1>
+  <p>What if we don't care?</p>
+</section>
 
-<pre class="fragment"><code class="ruby">
-class Post < ActiveRecord::Base; end
+<section>
+  <pre><code class="ruby">
+  class Post < ActiveRecord::Base; end
 
-result  = Post.find(1)
-=> #&lt;Post:...&gt;
+  result  = Post.find(1)
+  => #&lt;Post:...&gt;
 
-results = Post.find(1, 2)
-=> [#&lt;Post:...&gt;, #&lt;Post:...&gt;]
-</code></pre>
+  results = Post.find(1, 2)
+  => [#&lt;Post:...&gt;, #&lt;Post:...&gt;]
+  </code></pre>
 
-<span class="fragment">What if we don't know?</span>
-<pre class="fragment"><code class="ruby">
-results = Post.find(*ids)
+  <span class="fragment">What if we don't know?</span>
 
-[*results].map do |post|
-  # ...
-end
-</code></pre>
+  <pre class="fragment glue"><code class="ruby">
+  results = Post.find(one_or_many_ids)
+  </code></pre><pre class="fragment glue"><code class="ruby">
+  [*results].map do |post|
+    # ...
+  end
+  </code></pre>
 </script></section>
 
 
+<section>
+  <h1>Unary operators</h1>
+  <p>+, -, ! and ~ can be overriden</p>
+</section>
 
 <section>
-<h1>Unary operators</h1>
+  <pre><code class="ruby">
+  class Counter
+    def initialize
+      @value = 0
+    end
 
-<p class="fragment">+, -, ! and ~ can be overriden</p>
-<pre class="fragment"><code class="ruby">
-class Counter
-  def initialize
-    @value = 0
-  end
+    def +@
+      @value += 1
+    end
 
-  def +@
-    @value += 1
-  end
+    def -@
+      @value -= 1
+    end
 
-  def -@
-    @value -= 1
+    def ~
+      @value
+    end
   end
-
-  def ~
-    @value
-  end
-end
-</code></pre>
+  </code></pre>
 
 <pre class="fragment"><code class="ruby">
 c = Counter.new
@@ -231,23 +278,23 @@ puts ~c # 2
 
 <section>
 <h1>Method Madness</h1>
-<pre><code class="ruby">
-def m1(a, b=1)        # correct
+<pre class="glue"><code class="ruby">
+  def m1(a, b=1)        # correct
 
-</code><code class="fragment ruby">
-def m2(a=1, b)        # correct
+</code></pre><pre class="glue"><code class="fragment ruby">
+  def m2(a=1, b)        # correct
 
-</code><code class="fragment ruby">
-def m3(a, b=2, c)     # correct
+</code></pre><pre class="glue"><code class="fragment ruby">
+  def m3(a, b=2, c)     # correct
 
-</code><code class="fragment ruby">
-def m4(a=1, b, c=3)   # wrong (optional args must be sequential)
+</code></pre><pre class="glue"><code class="fragment ruby">
+  def m4(a=1, b, c=3)   # wrong (optional args must be sequential)
 
-</code><code class="fragment ruby">
-def m5(a, b=2, *args) # correct
+</code></pre><pre class="glue"><code class="fragment ruby">
+  def m5(a, b=2, *args) # correct
 
-</code><code class="fragment ruby">
-def m6(a=1, b, *args) # wrong
+</code></pre><pre class="glue"><code class="fragment ruby">
+  def m6(a=1, b, *args) # wrong
 
 </code></pre>
 </section>
@@ -257,30 +304,37 @@ def m6(a=1, b, *args) # wrong
   <h1>Method Madness</h1>
 
   <div class="stretch">
-    <pre><code class="ruby">
-def m7(*args, c)      # correct
+    <pre class="glue"><code class="ruby">
+  def m7(*args, c)      # correct
+    </code></pre><pre class="glue"><code class="fragment ruby">
+  def tail(*args, last)
+    last
+  end
+    </code></pre>
+  </div>
+</section>
 
-def tail(*args, last)
-  last
-end
-    </code><code class="fragment ruby">
-def m8(a, b=1, *args, d, e: 1, f:, **named_args, &block) # correct
+<section>
+  <h1>Getting Crazy!</h1>
 
-    </code><code class="fragment ruby">
-# blocks are just as powerful
-define_method 'm9' do |*args, **named_args, &block|
-end
+  <div class="stretch">
+    <pre class="glue"><code class="fragment ruby">
 
-    </code><code class="fragment ruby">
-def m8(a, b=1, *args, d, e: 1, f:, **named_args, &block) # correct
+  # this actually works!
+  def m8(a, b=1, *args, d, e: 1, f:, **named_args, &block)
+    </code></pre><pre class="glue"><code class="fragment ruby">
+  # blocks are almost as powerful (can't receive blocks, though)
+  define_method 'm9' do |*args, **named_args|
+  end
+    </code></pre><pre class="glue"><code class="fragment ruby">
+  def m8(a, b=1, *args, d, e: 1, f:, **named_args, &block) # correct
+    </code></pre><pre class="glue"><code class="fragment ruby">
+  define_method ' ' do
+    "this actually works!"
+  end
 
-    </code><code class="fragment ruby">
-define_method ' ' do
-  "this actually works!"
-end
-
-send(' ')
-=&gt; "this actually works!"
+  send(' ')
+  =&gt; "this actually works!"
     </code></pre>
   </div>
 </section>
@@ -292,13 +346,16 @@ send(' ')
 
 
 <section>
-  <h1>Modules</h1>
-
   <div class="stretch">
     <div class="c50">
       <pre><code class="ruby">
-class MyClass
-end
+  class MyClass
+  end
+
+
+
+  MyClass.ancestors
+  =&gt; [MyClass, Object]
       </code></pre>
     </div>
     <div class="c50">
@@ -309,14 +366,17 @@ end
 
 
 <section>
-  <h1>Modules</h1>
-
   <div class="stretch">
     <div class="c50">
       <pre><code class="ruby">
-class MyClass
-  include MyModule
-end
+  class MyClass
+    include MyModule
+  end
+
+
+
+  MyClass.ancestors
+  =&gt; [MyClass, MyModule, Object]
       </code></pre>
     </div>
     <div class="c50">
@@ -327,15 +387,19 @@ end
 
 
 <section>
-  <h1>Modules</h1>
-
   <div class="stretch">
     <div class="c50">
       <pre><code class="ruby">
-class MyClass
-  include MyModule
-  include AnotherModule
-end
+  class MyClass
+    include MyModule
+    include AnotherModule
+  end
+
+
+
+  MyClass.ancestors
+  =&gt; [MyClass, MyModule,
+         AnotherModule, Object]
       </code></pre>
     </div>
     <div class="c50">
@@ -346,14 +410,23 @@ end
 
 
 <section>
-  <h1>Modules</h1>
+  <h1>Since Ruby 2.0</h1>
+  <h1><code>Module#prepend</code></h1>
+</section>
 
+
+<section>
   <div class="stretch">
     <div class="c50">
       <pre><code class="ruby">
-class MyClass
-  prepend Prepended
-end
+  class MyClass
+    prepend Prepended
+  end
+
+
+
+  MyClass.ancestors
+  =&gt; [Prepended, MyClass, Object]
       </code></pre>
     </div>
     <div class="c50">
@@ -365,9 +438,13 @@ end
 
 <section>
   <h1>Lexical Scope</h1>
+  <p>Where do all these methods go?</p>
+</section>
 
+
+<section>
   <div class="stretch">
-    <div class="fragment">
+    <div>
       <div class="c50">
         <pre><code class="ruby">
   def m; end
@@ -420,7 +497,7 @@ Array.class
       <div class="c50">
         <pre><code class="ruby">
 [].class
-=&gt; MyClass
+=&gt; Array
         </code></pre>
       </div>
     </div>
@@ -429,13 +506,13 @@ Array.class
       <div class="c50">
         <pre><code class="ruby">
 Array.singleton_class
-=&gt; &lt;Class:MyClass&gt;
+=&gt; &lt;Class:Array&gt;
         </code></pre>
       </div>
       <div class="c50">
         <pre><code class="ruby">
 [].singleton_class
-=&gt; &lt;Class:#&lt;MyClass:0x007f86d8d6e370&gt;&gt;
+=&gt; &lt;Class:#&lt;Array:0x007f86d8d6e370&gt;&gt;
         </code></pre>
       </div>
     </div>
@@ -535,8 +612,13 @@ end
 
 
 <section>
-  <h1>Thank you!</h1>
-  <p>http://naps62.github.io/presentations</p>
+  <div class="stretch">
+    <h1>Thank you!</h1>
+    <p>http://naps62.github.io/presentations</p>
+  </div>
+
+  <p>btw:</p>
+  <img src="img/book.png" alt="book" width="30%">
 </section>
 
 
@@ -552,7 +634,7 @@ end
         progress: true,
         history: true,
         center: true,
-        overview: false,
+        overview: true,
 
         theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
         transition: Reveal.getQueryHash().u || 'linear', // default/cube/page/concave/zoom/linear/fade/none

@@ -79,3 +79,7 @@ $selectionBackgroundColor: $magenta;
 .reveal pre {
   box-shadow: none;
 }
+
+.reveal pre.glue {
+  margin: 0 auto;
+}
