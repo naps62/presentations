@@ -110,13 +110,15 @@
 
 <section data-markdown><script type="text/template">
   ```ruby
+
   user = { first_name: 'Professor' }
 
   user[:last_name].underscore
-    # NoMethodError for nil:NilClass
+  # NoMethodError for nil:NilClass
 
   user[:last_name].underscore rescue "CHIBANGA"
-    # falls back to "CHIBANGA"
+  # falls back to "CHIBANGA"
+
   ```
 </script></section>
 
@@ -126,21 +128,20 @@
   <p>Real men don't care about exceptions</p>
 </section>
 
-<section data-markdown><script type="text/template">
-  ```
+<section>
+  <pre><code class="ruby">
   begin
     some_dangerous_stuff
   rescue SomeException => e
     retry
   end
-  ```
+  </code></pre>
 </script></section>
 
-<section data-markdown><script type="text/template">
-
+<section>
 Real use case:
 
-  ```
+  <pre><code class="ruby">
   def insist(max_attempts: 3, &block)
     begin
       attempts = 0
@@ -150,7 +151,7 @@ Real use case:
       retry if attempts < max_attempts
     end
   end
-  ```
+  </code></pre>
 </script></section>
 
 <section>
@@ -220,7 +221,7 @@ Real use case:
   result  = Post.find(1)
   => #&lt;Post:...&gt;
 
-  results = Post.find(1, 2)
+  results = Post.find([1, 2])
   => [#&lt;Post:...&gt;, #&lt;Post:...&gt;]
   </code></pre>
 
@@ -262,12 +263,12 @@ Real use case:
   end
   </code></pre>
 
-<pre class="fragment"><code class="ruby">
-c = Counter.new
-+c
-+c
-puts ~c # 2
-</code></pre>
+  <pre class="fragment"><code class="ruby">
+  c = Counter.new
+  +c
+  +c
+  puts ~c # 2
+  </code></pre>
 </section>
 
 <section>
@@ -326,8 +327,6 @@ puts ~c # 2
   # blocks are almost as powerful (can't receive blocks, though)
   define_method 'm9' do |*args, **named_args|
   end
-    </code></pre><pre class="glue"><code class="fragment ruby">
-  def m8(a, b=1, *args, d, e: 1, f:, **named_args, &block) # correct
     </code></pre><pre class="glue"><code class="fragment ruby">
   define_method ' ' do
     "this actually works!"
@@ -521,48 +520,55 @@ Array.singleton_class
 
 
 <section>
+  <code>Array.singleton_class.singleton_class...</code>
+  <img src="img/yo_dawg.jpg" alt="yo dawg">
+</section>
+
+
+
+<section>
   <h1>Defining metaclass methods</h1>
 
   <div class="stretch">
-    <div class="fragment">
-      <div class="c50">
+    <div>
+      <div class="c50 fragment">
         <pre><code class="ruby">
 class Array
   def self.m; end
 end
         </code></pre>
       </div>
-      <div class="c50">
+      <div class="c50 fragment">
         Defined in Array's metaclass
       </div>
     </div>
 
-    <div class="fragment">
-      <div class="c50">
+    <div>
+      <div class="c50 fragment">
         <pre><code class="ruby">
 def Array.m; end
         </code></pre>
       </div>
-      <div class="c50">
+      <div class="c50 fragment">
         Same as above
       </div>
     </div>
 
-    <div class="fragment">
-      <div class="c50">
+    <div>
+      <div class="c50 fragment">
         <pre><code class="ruby">
 class &lt;&lt; Array
   def m; end
 end
         </code></pre>
       </div>
-      <div class="c50">
+      <div class="c50 fragment">
         Same as above
       </div>
     </div>
 
-    <div class="fragment">
-      <div class="c50">
+    <div>
+      <div class="c50 fragment">
         <pre><code class="ruby">
 class Array
   class &lt;&lt; self
@@ -571,7 +577,7 @@ class Array
 end
         </code></pre>
       </div>
-      <div class="c50">
+      <div class="c50 fragment">
         Same as above
       </div>
     </div>
@@ -583,19 +589,19 @@ end
 
   <div class="stretch">
     <div class="fragment">
-      <div class="c50">
+      <div class="c50 fragment">
         <pre><code class="ruby">
 a = Array.new
 def a.m; end
         </code></pre>
       </div>
-      <div class="c50">
+      <div class="c50 fragment">
         Defined in a's metaclass
       </div>
     </div>
 
-    <div class="fragment">
-      <div class="c50">
+    <div>
+      <div class="c50 fragment">
         <pre><code class="ruby">
 a = Array.new
 class &lt;&lt; a
@@ -603,11 +609,19 @@ class &lt;&lt; a
 end
         </code></pre>
       </div>
-      <div class="c50">
+      <div class="c50 fragment">
         Same as above
       </div>
     </div>
   </div>
+
+  <pre><code class="ruby fragment">
+  a.m
+  =&gt; nil
+
+  Array.new.m
+  =&gt; NoMethodError: undefined method `m' for []:Array
+  </code></pre>
 </section>
 
 

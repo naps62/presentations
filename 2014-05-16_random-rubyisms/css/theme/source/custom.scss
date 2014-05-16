@@ -83,3 +83,7 @@ $selectionBackgroundColor: $magenta;
 .reveal pre.glue {
   margin: 0 auto;
 }
+
+.reveal pre code {
+  max-height: none;
+}
