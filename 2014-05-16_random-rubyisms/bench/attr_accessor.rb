@@ -3,40 +3,38 @@
 require 'benchmark'
 GC.disable
 
-class WithDefaultReader
-  def initialize
-    @x = 1
-  end
-
-  attr_reader :x
+class WithDefaultAccessor
+  attr_accessor :x
 end
 
-class WithCustomReader
-  def initialize
-    @x = 2
-  end
-
+class WithCustomAccessor
   def x
     @x
   end
-end
 
-def large_sum(class_with_x)
-  (1..10000000).each do |i|
-    class_with_x.x
+  def x=(value)
+    @x = value
   end
 end
 
-bench_with_reader = Benchmark.measure do
-  large_sum(WithCustomReader.new)
+Benchmark.bm do |bench|
+  bench.report "default reader:" do
+    instance = WithDefaultAccessor.new
+    1000000.times { instance.x }
+  end
+
+  bench.report "custom reader: " do
+    instance = WithCustomAccessor.new
+    1000000.times { instance.x }
+  end
+
+  bench.report "default writer:" do
+    instance = WithDefaultAccessor.new
+    1000000.times { instance.x = 0 }
+  end
+
+  bench.report "custom writer: " do
+    instance = WithCustomAccessor.new
+    1000000.times { instance.x = 0 }
+  end
 end
-
-bench_without_reader = Benchmark.measure do
-  large_sum(WithCustomReader.new)
-end
-
-puts "WithDefaultReader:"
-puts bench_with_reader
-
-puts "WithCustomReader:"
-puts bench_without_reader
