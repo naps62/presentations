@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+JOKES = [
+  "Yo momma so fat, she broke the branch in her family tree!",
+  "Yo Momma so fat, even Dora cant explore her.",
+  "Yo Momma so stupid, she locked herself out of her motorcycle."
+]
+require 'optparse'
+OptionParser.new do |opts|
+  opts.banner = "Usage: todo [options]"
+
+  opts.on('-m', '--momma', 'joke about yo momma') do
+    puts JOKES.sample
+  end
+end.parse!

@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'fileutils'
+require 'csv'
+require 'pry'
+
+JOKES = [
+  "Yo momma so fat, she broke the branch in her family tree!",
+  "Yo Momma so fat, even Dora cant explore her.",
+  "Yo Momma so stupid, she locked herself out of her motorcycle."
+]
+TASKS_FILE = "/home/naps62/.todo"
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: todo [options]"
+
+  opts.on('-m', '--momma',            'joke about yo momma')                    { puts JOKES.sample }
+  opts.on('-c', '--count',            'Counts the number of tasks on the list') { puts count }
+  opts.on('-a', '--add TASK',         'Adds TASK to the todo list')             { |task| add task }
+  opts.on('-d', '--done ID', Integer, 'Marks task with given ID as done')       { |id| mark_as_done id }
+  opts.on('-l', '--list',             'List all tasks')                         { list }
+end
+
+def count
+  File.read(TASKS_FILE).scan(/\n/).count
+end
+
+def add(task)
+  CSV.open(TASKS_FILE, "a+") do |csv|
+    csv << [false, task]
+  end
+end
+
+def mark_as_done(id)
+  tasks = CSV.read(TASKS_FILE)
+  tasks[id-1][0] = true
+  CSV.open(TASKS_FILE, 'wb') do |csv|
+    tasks.each { |task| csv << task }
+  end
+end
+
+def list
+  CSV.read(TASKS_FILE).each_with_index do |task, index|
+    mark = { "true" => "[X]", "false" => "[ ]" }[task.first]
+    name = task.last
+    puts [index + 1, mark, name].join(' ')
+  end
+end
+
+if ARGV.empty?
+  list
+elsif ARGV.size == 1
+  add ARGV.first
+else
+  parser.parse(ARGV)
+end

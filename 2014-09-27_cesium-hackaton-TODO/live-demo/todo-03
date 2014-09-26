@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'fileutils'
+
+JOKES = [
+  "Yo momma so fat, she broke the branch in her family tree!",
+  "Yo Momma so fat, even Dora cant explore her.",
+  "Yo Momma so stupid, she locked herself out of her motorcycle."
+]
+TASKS_FILE = "/home/naps62/.todo"
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: todo [options]"
+
+  opts.on('-m', '--momma', 'joke about yo momma') do
+    puts JOKES.sample
+  end
+
+  opts.on('-c', '--count', 'Counts the number of tasks on the list') do
+    puts count
+  end
+end
+
+def count
+  File.read(TASKS_FILE).scan(/\n/).count
+end
+
+parser.parse(ARGV)
